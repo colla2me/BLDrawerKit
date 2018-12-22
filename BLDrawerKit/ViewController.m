@@ -7,7 +7,8 @@
 //
 
 #import "ViewController.h"
-#import "BLPesentationController.h"
+//#import "BLPesentationController.h"
+#import "UIViewController+BLDrawerKit.h"
 
 @interface ViewController ()
 
@@ -22,28 +23,19 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    UIScreenEdgePanGestureRecognizer *interactiveTransitionRecognizer;
-    interactiveTransitionRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(interactiveTransitionRecognizerAction:)];
-    interactiveTransitionRecognizer.edges = UIRectEdgeLeft;
-    [self.view addGestureRecognizer:interactiveTransitionRecognizer];
+    [self setDrawerController:[ViewController viewController] edgeForOpening:UIRectEdgeRight];
 }
 
-- (IBAction)openAction:(id)sender {
-    [self showDrawerController:nil];
+- (IBAction)openLeftAction:(id)sender {
+    [self openDrawerSide:UIRectEdgeLeft animated:YES completion:^{
+        
+    }];
 }
 
-- (void)showDrawerController:(UIPanGestureRecognizer *)sender {
-    UIViewController *vc = [ViewController viewController];
-    BLPesentationController *presentationController NS_VALID_UNTIL_END_OF_SCOPE;
-    presentationController = [[BLPesentationController alloc] initWithPresentedViewController:vc presentingViewController:self gestureRecognizer:sender];
-    vc.transitioningDelegate = presentationController;
-    [self presentViewController:vc animated:YES completion:NULL];
-}
-
-- (void)interactiveTransitionRecognizerAction:(UIPanGestureRecognizer *)sender {
-    if (sender.state == UIGestureRecognizerStateBegan) {
-        [self showDrawerController:sender];
-    }
+- (IBAction)openRightAction:(id)sender {
+    [self openDrawerSide:UIRectEdgeRight animated:YES completion:^{
+        
+    }];
 }
 
 @end

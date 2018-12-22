@@ -34,9 +34,14 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" title="BLDrawerKit" id="EbS-7E-Ga6">
-                        <barButtonItem key="leftBarButtonItem" title="Open" id="VEM-BI-02D">
+                        <barButtonItem key="leftBarButtonItem" title="Left" id="VEM-BI-02D">
                             <connections>
-                                <action selector="openAction:" destination="BYZ-38-t0r" id="kvo-Uy-dMl"/>
+                                <action selector="openLeftAction:" destination="BYZ-38-t0r" id="Wc9-Au-bDY"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Right" id="Wuv-UQ-SSV">
+                            <connections>
+                                <action selector="openRightAction:" destination="BYZ-38-t0r" id="9cn-kQ-vtm"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>

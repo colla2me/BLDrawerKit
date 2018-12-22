@@ -1,6 +1,6 @@
 //
 //  BLDrawerPesentation.m
-//  FBLiveDemo
+//  BLDrawerKit
 //
 //  Created by Samuel on 2018/12/20.
 //  Copyright © 2018年 TD-tech. All rights reserved.
@@ -12,17 +12,17 @@
 
 @interface BLPesentationController ()<UIViewControllerAnimatedTransitioning>
 @property (nonatomic, strong) UIView *dimmingView;
-@property (nonatomic, strong) UIView *presentationWrappingView;
-@property (nonatomic, strong) BLPanGestureRecognizer *panGesture;
 @property (nonatomic, strong) BLDrawerInteractiveTransition *interactiveTransiton;
 @end
 
 @implementation BLPesentationController
 
-- (instancetype)initWithPresentedViewController:(UIViewController *)presentedViewController presentingViewController:(UIViewController *)presentingViewController gestureRecognizer:(UIPanGestureRecognizer *)gestureRecognizer {
+- (instancetype)initWithPresentedViewController:(UIViewController *)presentedViewController presentingViewController:(UIViewController *)presentingViewController gestureRecognizer:(UIScreenEdgePanGestureRecognizer *)gestureRecognizer {
+    NSParameterAssert(gestureRecognizer && [gestureRecognizer isKindOfClass:[UIScreenEdgePanGestureRecognizer class]]);
     self = [self initWithPresentedViewController:presentedViewController presentingViewController:presentingViewController];
     if (self) {
-        self.interactiveTransiton = gestureRecognizer && [gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] ? [[BLDrawerInteractiveTransition alloc] initWithGestureRecognizer:gestureRecognizer edgeForDragging:UIRectEdgeLeft] : nil;
+        self.targetEdge = gestureRecognizer.edges;
+        self.interactiveTransiton = [[BLDrawerInteractiveTransition alloc] initWithGestureRecognizer:gestureRecognizer edgeForDragging:_targetEdge];
     }
     return self;
 }
@@ -30,6 +30,7 @@
 - (instancetype)initWithPresentedViewController:(UIViewController *)presentedViewController presentingViewController:(UIViewController *)presentingViewController {
     self = [super initWithPresentedViewController:presentedViewController presentingViewController:presentingViewController];
     if (self) {
+        _targetEdge = UIRectEdgeLeft;
         presentedViewController.modalPresentationStyle = UIModalPresentationCustom;
     }
     return self;
@@ -37,7 +38,7 @@
 
 - (void)interactiveTransitionRecognizerAction:(UIPanGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateBegan) {
-        self.interactiveTransiton = [[BLDrawerInteractiveTransition alloc] initWithGestureRecognizer:self.panGesture edgeForDragging:UIRectEdgeRight];
+        self.interactiveTransiton = [[BLDrawerInteractiveTransition alloc] initWithGestureRecognizer:sender edgeForDragging:self.targetEdge];
         [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
     } else if (sender.state == UIGestureRecognizerStateChanged) {/* do nothing */}
     else {
@@ -45,63 +46,34 @@
     }
 }
 
-- (UIView*)presentedView
-{
-    return self.presentationWrappingView;
-}
-
 - (void)presentationTransitionWillBegin
 {
-    UIView *presentedViewControllerView = [super presentedView];
+    UIView *dimmingView = [[UIView alloc] initWithFrame:self.containerView.bounds];
+    dimmingView.backgroundColor = [UIColor blackColor];
+    dimmingView.opaque = NO;
+    dimmingView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self.containerView addSubview:dimmingView];
+    self.dimmingView = dimmingView;
     
-    {
-        UIView *presentationWrapperView = [[UIView alloc] initWithFrame:self.frameOfPresentedViewInContainerView];
-        self.presentationWrappingView = presentationWrapperView;
-        
-        UIView *presentationRoundedCornerView = [[UIView alloc] initWithFrame:presentationWrapperView.bounds];
-        presentationRoundedCornerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-
-        UIView *presentedViewControllerWrapperView = [[UIView alloc] initWithFrame:presentationRoundedCornerView.bounds];
-        presentedViewControllerWrapperView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        
-        presentedViewControllerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        presentedViewControllerView.frame = presentedViewControllerWrapperView.bounds;
-        [presentedViewControllerWrapperView addSubview:presentedViewControllerView];
-        
-        [presentationRoundedCornerView addSubview:presentedViewControllerWrapperView];
-
-        [presentationWrapperView addSubview:presentationRoundedCornerView];
-    }
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dimmingViewTapped:)];
+    [dimmingView addGestureRecognizer:tapGesture];
     
-    {
-        UIView *dimmingView = [[UIView alloc] initWithFrame:self.containerView.bounds];
-        dimmingView.backgroundColor = [UIColor blackColor];
-        dimmingView.opaque = NO;
-        dimmingView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [self.containerView addSubview:dimmingView];
-        self.dimmingView = dimmingView;
-        
-        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dimmingViewTapped:)];
-        [dimmingView addGestureRecognizer:tapGesture];
-        
-        BLPanGestureRecognizer *panGesture = [[BLPanGestureRecognizer alloc] initWithTarget:self action:@selector(interactiveTransitionRecognizerAction:) edgeForDragging:UIRectEdgeRight];
-        [dimmingView addGestureRecognizer:panGesture];
-        [tapGesture requireGestureRecognizerToFail:panGesture];
-        self.panGesture = panGesture;
-        
-        id<UIViewControllerTransitionCoordinator> transitionCoordinator = self.presentingViewController.transitionCoordinator;
-        
-        self.dimmingView.alpha = 0.f;
-        [transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context) {
-            self.dimmingView.alpha = 0.5f;
-        } completion:NULL];
-    }
+    BLPanGestureRecognizer *panGesture = [[BLPanGestureRecognizer alloc] initWithTarget:self action:@selector(interactiveTransitionRecognizerAction:) edgeForDragging:_targetEdge];
+    [dimmingView addGestureRecognizer:panGesture];
+    
+    [tapGesture requireGestureRecognizerToFail:panGesture];
+    
+    id<UIViewControllerTransitionCoordinator> transitionCoordinator = self.presentingViewController.transitionCoordinator;
+    
+    self.dimmingView.alpha = 0.f;
+    [transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context) {
+        self.dimmingView.alpha = 0.5f;
+    } completion:NULL];
 }
 
 - (void)presentationTransitionDidEnd:(BOOL)completed
 {
     if (!completed) {
-        self.presentationWrappingView = nil;
         self.dimmingView = nil;
     }
     self.interactiveTransiton = nil;
@@ -120,7 +92,6 @@
 {
     if (completed) {
         self.interactiveTransiton = nil;
-        self.presentationWrappingView = nil;
         self.dimmingView = nil;
     }
 }
@@ -158,7 +129,7 @@
     [super containerViewWillLayoutSubviews];
     
     self.dimmingView.frame = self.containerView.bounds;
-    self.presentationWrappingView.frame = self.frameOfPresentedViewInContainerView;
+//    self.presentationWrappingView.frame = self.frameOfPresentedViewInContainerView;
 }
 
 #pragma mark -
@@ -174,7 +145,7 @@
 
 - (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext
 {
-    return [transitionContext isAnimated] ? 0.4 : 0;
+    return [transitionContext isAnimated] ? 0.3 : 0;
 }
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
@@ -184,40 +155,54 @@
     
     UIView *containerView = transitionContext.containerView;
     
-    // For a Presentation:
-    //      fromView = The presenting view.
-    //      toView   = The presented view.
-    // For a Dismissal:
-    //      fromView = The presented view.
-    //      toView   = The presenting view.
     UIView *toView = [transitionContext viewForKey:UITransitionContextToViewKey];
-
     UIView *fromView = [transitionContext viewForKey:UITransitionContextFromViewKey];
     
     BOOL isPresenting = (fromViewController == self.presentingViewController);
     
     CGRect fromViewFinalFrame = [transitionContext finalFrameForViewController:fromViewController];
-    CGRect toViewInitialFrame = [transitionContext initialFrameForViewController:toViewController];
     CGRect toViewFinalFrame = [transitionContext finalFrameForViewController:toViewController];
     
-    [containerView addSubview:toView];
-    
-    if (isPresenting) {
-        toViewInitialFrame = toViewFinalFrame;
-        toViewInitialFrame.origin.x = -toViewFinalFrame.size.width;
-        toView.frame = toViewInitialFrame;
-    } else {
-        fromViewFinalFrame = CGRectOffset(fromView.frame, -CGRectGetWidth(fromView.frame), 0);
+    CGSize containerSize = containerView.bounds.size;
+    CGPoint offset = CGPointZero;
+    switch (_targetEdge) {
+        case UIRectEdgeTop:
+            offset.y = isPresenting ? -toViewFinalFrame.size.height : -fromViewFinalFrame.size.height;
+            break;
+        case UIRectEdgeBottom:
+            offset.y = isPresenting ? containerSize.height : fromViewFinalFrame.size.height;
+            break;
+        case UIRectEdgeLeft:
+            offset.x = isPresenting ? -toViewFinalFrame.size.width : -fromViewFinalFrame.size.width;
+            break;
+        case UIRectEdgeRight:
+            offset.x = isPresenting ? containerSize.width : fromViewFinalFrame.size.width;
+            break;
+        default:
+            break;
     }
     
+    if (isPresenting) {
+        toView.frame = CGRectOffset(toViewFinalFrame, offset.x, offset.y);
+        if (UIRectEdgeRight == _targetEdge) {
+            toViewFinalFrame.origin.x = containerSize.width - toViewFinalFrame.size.width;
+        } else if (UIRectEdgeBottom == _targetEdge) {
+            toViewFinalFrame.origin.y = containerSize.height - toViewFinalFrame.size.height;
+        }
+        
+        [containerView addSubview:toView];
+    } else {
+        fromViewFinalFrame = CGRectOffset(fromViewFinalFrame, offset.x, offset.y);
+    }
+
     NSTimeInterval transitionDuration = [self transitionDuration:transitionContext];
     
     [UIView animateWithDuration:transitionDuration animations:^{
-        if (isPresenting)
+        if (isPresenting) {
             toView.frame = toViewFinalFrame;
-        else
+        } else {
             fromView.frame = fromViewFinalFrame;
-        
+        }
     } completion:^(BOOL finished) {
         BOOL wasCancelled = [transitionContext transitionWasCancelled];
         [transitionContext completeTransition:!wasCancelled];

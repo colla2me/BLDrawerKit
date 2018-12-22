@@ -10,6 +10,8 @@
 
 @interface BLPesentationController : UIPresentationController <UIViewControllerTransitioningDelegate>
 
-- (instancetype)initWithPresentedViewController:(UIViewController *)presentedViewController presentingViewController:(UIViewController *)presentingViewController gestureRecognizer:(UIPanGestureRecognizer *)gestureRecognizer;
+- (instancetype)initWithPresentedViewController:(UIViewController *)presentedViewController presentingViewController:(UIViewController *)presentingViewController gestureRecognizer:(UIScreenEdgePanGestureRecognizer *)gestureRecognizer;
+
+@property (nonatomic, assign) UIRectEdge targetEdge;
 
 @end

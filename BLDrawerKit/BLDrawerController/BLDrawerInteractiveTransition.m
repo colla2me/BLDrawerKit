@@ -1,6 +1,6 @@
 //
 //  BLDrawerInteractiveTransition.m
-//  FBLiveDemo
+//  BLDrawerKit
 //
 //  Created by Samuel on 2018/12/21.
 //  Copyright © 2018年 TD-tech. All rights reserved.
@@ -71,9 +71,9 @@
     // Return an appropriate percentage based on which edge we're dragging
     // from.
     if (self.edge == UIRectEdgeRight)
-        return (width - locationInSourceView.x) / width;
+        return 1.0 - (width - locationInSourceView.x) / width;
     else if (self.edge == UIRectEdgeLeft)
-        return locationInSourceView.x / width;
+        return 1.0 - locationInSourceView.x / width;
     else if (self.edge == UIRectEdgeBottom)
         return (height - locationInSourceView.y) / height;
     else if (self.edge == UIRectEdgeTop)

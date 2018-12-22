@@ -1,6 +1,6 @@
 //
 //  BLPanGestureRecognizer.m
-//  FBLiveDemo
+//  BLDrawerKit
 //
 //  Created by Samuel on 2018/12/21.
 //  Copyright © 2018年 TD-tech. All rights reserved.
@@ -21,20 +21,11 @@
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
-    UIWindow *window = [UIApplication sharedApplication].windows.lastObject;
-    BOOL isLeftToRight = _edges == UIRectEdgeLeft;
-    CGFloat xOffset = isLeftToRight ? 44 : -44;
-    CGFloat threshold = window.bounds.size.width * 0.5 + xOffset;
-    CGPoint beginningLocation = [gestureRecognizer locationInView:gestureRecognizer.view];
+    if (!(_edges == UIRectEdgeLeft || _edges == UIRectEdgeRight)) return NO;
     
-    if (_edges == UIRectEdgeLeft && beginningLocation.x > threshold) {
-        return NO;
-    } else if (_edges == UIRectEdgeRight && beginningLocation.x < threshold) {
-        return NO;
-    }
-    
+    BOOL isEdgeLeft = _edges == UIRectEdgeLeft;
     CGPoint translation = [self translationInView:gestureRecognizer.view];
-    CGFloat multiplier = isLeftToRight ? 1 : - 1;
+    CGFloat multiplier = isEdgeLeft ? -1 : 1;
     if ((translation.x * multiplier) <= 0) {
         return NO;
     }

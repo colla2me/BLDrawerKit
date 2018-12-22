@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		84F28C3421CE0FBC00094E4B /* UIViewController+BLDrawerKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 84F28C3321CE0FBC00094E4B /* UIViewController+BLDrawerKit.m */; };
 		84F682BA21CCEF530058B807 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 84F682B921CCEF530058B807 /* AppDelegate.m */; };
 		84F682BD21CCEF530058B807 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 84F682BC21CCEF530058B807 /* ViewController.m */; };
 		84F682C021CCEF530058B807 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84F682BE21CCEF530058B807 /* Main.storyboard */; };
@@ -20,6 +21,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		84F28C3221CE0FBC00094E4B /* UIViewController+BLDrawerKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+BLDrawerKit.h"; sourceTree = "<group>"; };
+		84F28C3321CE0FBC00094E4B /* UIViewController+BLDrawerKit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+BLDrawerKit.m"; sourceTree = "<group>"; };
 		84F682B521CCEF530058B807 /* BLDrawerKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BLDrawerKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84F682B821CCEF530058B807 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		84F682B921CCEF530058B807 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -89,6 +92,8 @@
 		84F682D721CCEF6C0058B807 /* BLDrawerController */ = {
 			isa = PBXGroup;
 			children = (
+				84F28C3221CE0FBC00094E4B /* UIViewController+BLDrawerKit.h */,
+				84F28C3321CE0FBC00094E4B /* UIViewController+BLDrawerKit.m */,
 				84F682D121CCEF660058B807 /* BLDrawerInteractiveTransition.h */,
 				84F682D021CCEF660058B807 /* BLDrawerInteractiveTransition.m */,
 				84F682CF21CCEF660058B807 /* BLPanGestureRecognizer.h */,
@@ -173,6 +178,7 @@
 				84F682D621CCEF660058B807 /* BLPanGestureRecognizer.m in Sources */,
 				84F682D521CCEF660058B807 /* BLDrawerInteractiveTransition.m in Sources */,
 				84F682BD21CCEF530058B807 /* ViewController.m in Sources */,
+				84F28C3421CE0FBC00094E4B /* UIViewController+BLDrawerKit.m in Sources */,
 				84F682DA21CCF2730058B807 /* DrawerViewController.m in Sources */,
 				84F682C821CCEF540058B807 /* main.m in Sources */,
 				84F682BA21CCEF530058B807 /* AppDelegate.m in Sources */,
