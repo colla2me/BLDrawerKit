@@ -13,6 +13,7 @@
 @property (nonatomic, weak) id<UIViewControllerContextTransitioning> transitionContext;
 @property (nonatomic, strong, readonly) UIPanGestureRecognizer *gestureRecognizer;
 @property (nonatomic, readonly) UIRectEdge edge;
+@property (nonatomic, readonly) BOOL open;
 
 @end
 
@@ -28,7 +29,7 @@
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"Use -initWithGestureRecognizer:edgeForDragging:" userInfo:nil];
 }
 
-- (instancetype)initWithGestureRecognizer:(UIPanGestureRecognizer *)gestureRecognizer edgeForDragging:(UIRectEdge)edge {
+- (instancetype)initWithGestureRecognizer:(UIPanGestureRecognizer *)gestureRecognizer edgeForDragging:(UIRectEdge)edge openDrawer:(BOOL)open {
     NSAssert(edge == UIRectEdgeTop || edge == UIRectEdgeBottom ||
              edge == UIRectEdgeLeft || edge == UIRectEdgeRight,
              @"edgeForDragging must be one of UIRectEdgeTop, UIRectEdgeBottom, UIRectEdgeLeft, or UIRectEdgeRight.");
@@ -37,6 +38,7 @@
     if (self) {
         _gestureRecognizer = gestureRecognizer;
         _edge = edge;
+        _open = open;
         
         // Add self as an observer of the gesture recognizer so that this
         // object receives updates as the user moves their finger.
@@ -71,9 +73,9 @@
     // Return an appropriate percentage based on which edge we're dragging
     // from.
     if (self.edge == UIRectEdgeRight)
-        return 1.0 - (width - locationInSourceView.x) / width;
+        return _open ? (width - locationInSourceView.x) / width : 1.0 - (width - locationInSourceView.x) / width;
     else if (self.edge == UIRectEdgeLeft)
-        return 1.0 - locationInSourceView.x / width;
+        return _open ? locationInSourceView.x / width : 1.0 - locationInSourceView.x / width;
     else if (self.edge == UIRectEdgeBottom)
         return (height - locationInSourceView.y) / height;
     else if (self.edge == UIRectEdgeTop)

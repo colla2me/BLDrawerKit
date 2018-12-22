@@ -22,7 +22,7 @@
     self = [self initWithPresentedViewController:presentedViewController presentingViewController:presentingViewController];
     if (self) {
         self.targetEdge = gestureRecognizer.edges;
-        self.interactiveTransiton = [[BLDrawerInteractiveTransition alloc] initWithGestureRecognizer:gestureRecognizer edgeForDragging:_targetEdge];
+        self.interactiveTransiton = [[BLDrawerInteractiveTransition alloc] initWithGestureRecognizer:gestureRecognizer edgeForDragging:_targetEdge openDrawer:YES];
     }
     return self;
 }
@@ -38,7 +38,7 @@
 
 - (void)interactiveTransitionRecognizerAction:(UIPanGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateBegan) {
-        self.interactiveTransiton = [[BLDrawerInteractiveTransition alloc] initWithGestureRecognizer:sender edgeForDragging:self.targetEdge];
+        self.interactiveTransiton = [[BLDrawerInteractiveTransition alloc] initWithGestureRecognizer:sender edgeForDragging:_targetEdge openDrawer:NO];
         [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
     } else if (sender.state == UIGestureRecognizerStateChanged) {/* do nothing */}
     else {

@@ -10,6 +10,6 @@
 
 @interface BLDrawerInteractiveTransition : UIPercentDrivenInteractiveTransition
 
-- (instancetype)initWithGestureRecognizer:(UIPanGestureRecognizer *)gestureRecognizer edgeForDragging:(UIRectEdge)edge;
+- (instancetype)initWithGestureRecognizer:(UIPanGestureRecognizer *)gestureRecognizer edgeForDragging:(UIRectEdge)edge openDrawer:(BOOL)open;
 
 @end
