@@ -121,6 +121,7 @@
     CGSize presentedViewContentSize = [self sizeForChildContentContainer:self.presentedViewController withParentContainerSize:containerViewBounds.size];
     CGRect presentedViewControllerFrame = containerViewBounds;
     presentedViewControllerFrame.size.width = presentedViewContentSize.width;
+    presentedViewControllerFrame.size.height = presentedViewContentSize.height;
     return presentedViewControllerFrame;
 }
 

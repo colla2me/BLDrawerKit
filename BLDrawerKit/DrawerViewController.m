@@ -16,7 +16,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.preferredContentSize = CGSizeMake(CGRectGetWidth(self.view.bounds) * 0.6, CGRectGetHeight(self.view.bounds));
+    self.preferredContentSize = CGSizeMake(CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) * 0.6);
 }
 
 - (IBAction)closeAction:(id)sender {

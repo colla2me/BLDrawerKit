@@ -27,13 +27,13 @@
 }
 
 - (IBAction)openLeftAction:(id)sender {
-    [self openDrawerSide:UIRectEdgeLeft animated:YES completion:^{
+    [self openDrawerSide:UIRectEdgeTop animated:YES completion:^{
         
     }];
 }
 
 - (IBAction)openRightAction:(id)sender {
-    [self openDrawerSide:UIRectEdgeRight animated:YES completion:^{
+    [self openDrawerSide:UIRectEdgeBottom animated:YES completion:^{
         
     }];
 }
