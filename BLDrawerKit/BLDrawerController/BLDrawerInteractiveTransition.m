@@ -57,31 +57,43 @@
 
 - (CGFloat)percentForGesture:(UIPanGestureRecognizer *)gesture
 {
-    // Because view controllers will be sliding on and off screen as part
-    // of the animation, we want to base our calculations in the coordinate
-    // space of the view that will not be moving: the containerView of the
-    // transition context.
-    UIView *transitionContainerView = self.transitionContext.containerView;
+    // self.transitionContext.containerView
+    UIView *transitionContainerView = gesture.view;
     
-    CGPoint locationInSourceView = [gesture locationInView:transitionContainerView];
-    
+    CGPoint translation = [gesture translationInView:transitionContainerView];
+
     // Figure out what percentage we've gone.
+    CGFloat percent = 0.f, width = 0.f, height = 0.f;
     
-    CGFloat width = CGRectGetWidth(transitionContainerView.bounds);
-    CGFloat height = CGRectGetHeight(transitionContainerView.bounds);
+    switch (_edge) {
+        case UIRectEdgeRight:
+        case UIRectEdgeLeft:
+            if (_open) {
+                UIView *toView = [self.transitionContext viewForKey:UITransitionContextToViewKey];
+                width = CGRectGetWidth(toView.frame);
+            } else {
+                UIView *fromView = [self.transitionContext viewForKey:UITransitionContextFromViewKey];
+                width = CGRectGetWidth(fromView.frame);
+            }
+            percent = ABS(translation.x) / MAX(width, 1.0);
+            break;
+        case UIRectEdgeBottom:
+        case UIRectEdgeTop:
+            if (_open) {
+                UIView *toView = [self.transitionContext viewForKey:UITransitionContextToViewKey];
+                height = CGRectGetHeight(toView.frame);
+            } else {
+                UIView *fromView = [self.transitionContext viewForKey:UITransitionContextFromViewKey];
+                height = CGRectGetHeight(fromView.frame);
+            }
+            percent = ABS(translation.y) / MAX(height, 1.0);
+            break;
+        default:
+            percent = 0.f;
+            break;
+    }
     
-    // Return an appropriate percentage based on which edge we're dragging
-    // from.
-    if (self.edge == UIRectEdgeRight)
-        return _open ? (width - locationInSourceView.x) / width : 1.0 - (width - locationInSourceView.x) / width;
-    else if (self.edge == UIRectEdgeLeft)
-        return _open ? locationInSourceView.x / width : 1.0 - locationInSourceView.x / width;
-    else if (self.edge == UIRectEdgeBottom)
-        return (height - locationInSourceView.y) / height;
-    else if (self.edge == UIRectEdgeTop)
-        return locationInSourceView.y / height;
-    else
-        return 0.f;
+    return MIN(1.0, percent);
 }
 
 - (void)gestureRecognizeDidUpdate:(UIPanGestureRecognizer *)gestureRecognizer
@@ -97,14 +109,16 @@
             // We have been dragging! Update the transition context accordingly.
             [self updateInteractiveTransition:[self percentForGesture:gestureRecognizer]];
             break;
-        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateEnded: {
             // Dragging has finished.
             // Complete or cancel, depending on how far we've dragged.
-            if ([self percentForGesture:gestureRecognizer] >= 0.5f)
+            CGFloat threshold = _open ? 0.25 : 0.5;
+            if ([self percentForGesture:gestureRecognizer] >= threshold)
                 [self finishInteractiveTransition];
             else
                 [self cancelInteractiveTransition];
             break;
+        }
         default:
             // Something happened. cancel the transition.
             [self cancelInteractiveTransition];

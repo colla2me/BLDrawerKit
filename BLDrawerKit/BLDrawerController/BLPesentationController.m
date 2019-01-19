@@ -10,7 +10,7 @@
 #import "BLDrawerInteractiveTransition.h"
 #import "BLPanGestureRecognizer.h"
 
-@interface BLPesentationController ()<UIViewControllerAnimatedTransitioning>
+@interface BLPesentationController () <UIViewControllerAnimatedTransitioning>
 @property (nonatomic, strong) UIView *dimmingView;
 @property (nonatomic, strong) BLDrawerInteractiveTransition *interactiveTransiton;
 @end
@@ -59,9 +59,7 @@
     [dimmingView addGestureRecognizer:tapGesture];
     
     BLPanGestureRecognizer *panGesture = [[BLPanGestureRecognizer alloc] initWithTarget:self action:@selector(interactiveTransitionRecognizerAction:) edgeForDragging:_targetEdge];
-    [dimmingView addGestureRecognizer:panGesture];
-    
-    [tapGesture requireGestureRecognizerToFail:panGesture];
+    [self.containerView addGestureRecognizer:panGesture];
     
     id<UIViewControllerTransitionCoordinator> transitionCoordinator = self.presentingViewController.transitionCoordinator;
     
@@ -128,9 +126,7 @@
 - (void)containerViewWillLayoutSubviews
 {
     [super containerViewWillLayoutSubviews];
-    
     self.dimmingView.frame = self.containerView.bounds;
-//    self.presentationWrappingView.frame = self.frameOfPresentedViewInContainerView;
 }
 
 #pragma mark -

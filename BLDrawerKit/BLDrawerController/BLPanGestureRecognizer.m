@@ -21,16 +21,31 @@
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
-    if (!(_edges == UIRectEdgeLeft || _edges == UIRectEdgeRight)) return NO;
+    if (UIRectEdgeNone == _edges || UIRectEdgeAll == _edges) return NO;
     
-    BOOL isEdgeLeft = _edges == UIRectEdgeLeft;
     CGPoint translation = [self translationInView:gestureRecognizer.view];
-    CGFloat multiplier = isEdgeLeft ? -1 : 1;
-    if ((translation.x * multiplier) <= 0) {
-        return NO;
+    CGFloat multiplier = (_edges == UIRectEdgeLeft || _edges == UIRectEdgeTop) ? -1 : 1;
+    
+    BOOL shouldBegin = YES;
+    switch (_edges) {
+        case UIRectEdgeLeft:
+        case UIRectEdgeRight:
+            if ((translation.x * multiplier) <= 0) {
+                shouldBegin = NO;
+            }
+            break;
+        case UIRectEdgeTop:
+        case UIRectEdgeBottom:
+            if ((translation.y * multiplier) <= 0) {
+                shouldBegin = NO;
+            }
+            break;
+        default:
+            shouldBegin = NO;
+            break;
     }
     
-    return YES;
+    return shouldBegin;
 }
 
 @end

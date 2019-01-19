@@ -23,7 +23,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self setDrawerController:[ViewController viewController] edgeForOpening:UIRectEdgeLeft];
+    [self setDrawerController:[ViewController viewController] edgeForOpening:UIRectEdgeRight];
 }
 
 - (IBAction)openLeftAction:(id)sender {
